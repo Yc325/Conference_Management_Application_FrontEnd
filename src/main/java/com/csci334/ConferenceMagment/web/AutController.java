@@ -15,6 +15,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(
+        allowCredentials = "true",
+        origins = "*",
+        allowedHeaders = "*",
+        methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT}
+)
 public class AutController {
     @Autowired
     private AuthenticationManager  authenticationManager;
@@ -23,12 +29,6 @@ public class AutController {
     private JwtUtil jwtUtil;
 
     @PostMapping("login")
-    @CrossOrigin(
-            allowCredentials = "true",
-            origins = "*",
-            allowedHeaders = "*",
-            methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT}
-    )
     public ResponseEntity<?> login (@RequestBody AuthCredentialsRequest request){
         try {
             Authentication authenticate = authenticationManager
