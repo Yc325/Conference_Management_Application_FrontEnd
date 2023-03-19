@@ -42,7 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //Security that reduce hackers to get to the system
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http = http.csrf().disable().cors().disable();
+        http = http.csrf().disable();
+//                .cors().able();
 
         http = http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
