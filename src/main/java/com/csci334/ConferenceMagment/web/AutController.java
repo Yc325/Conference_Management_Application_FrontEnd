@@ -13,6 +13,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(
@@ -40,12 +42,16 @@ public class AutController {
 
             User user = (User) authenticate.getPrincipal();
             user.setPassword(null);
-            return ResponseEntity.ok()
-                    .header(
-                            HttpHeaders.AUTHORIZATION,
-                            jwtUtil.generateToken(user)
-                    )
-                    .body(user);
+            HashMap<String, String> jwtToken =  new HashMap<String, String>();
+            jwtToken.put("token",jwtUtil.generateToken(user));
+            return ResponseEntity.ok(jwtToken);
+//                    .body()
+////                    .body(jwtUtil.generateToken(user));
+//                    .header(
+//                            HttpHeaders.AUTHORIZATION,
+//                            jwtUtil.generateToken(user)
+//                    )
+//                    .body(user);
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
