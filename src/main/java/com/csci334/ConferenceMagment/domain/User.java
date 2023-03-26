@@ -1,5 +1,6 @@
 package com.csci334.ConferenceMagment.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -16,7 +17,12 @@ public class User implements UserDetails {
     private Long id;
     private LocalDate accountCreatedAt;
     private String username;
+    @JsonIgnore
     private String password;
+
+    @OneToMany( fetch = FetchType.EAGER, mappedBy = "user")
+    @JsonIgnore
+    private List<Authority> authorities = new ArrayList<>();
 
     //TODO: Create Role: ADMIN, AUTHOR, REVIEWER, CONF CHAIR
 
@@ -66,10 +72,11 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
 
-        List<GrantedAuthority> roles = new ArrayList<>();
-        roles.add(new Authority("ROLE_AUTHOR"));
-        return roles;
+    public void setAuthorities(List<Authority> authorities) {
+        this.authorities = authorities;
     }
 
     @Override
