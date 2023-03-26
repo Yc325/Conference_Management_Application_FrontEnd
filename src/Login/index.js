@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLocalState } from '../util/useLocalStorage';
+import {Container, Row, Col,Button, Form} from 'react-bootstrap'
 
 const Login = () => {
 
@@ -9,13 +10,10 @@ const [password, setPassword] = useState("");
 const [jwt,setJwt] = useLocalState("","jwt")
 
 function sendLoginRequest(){
-    if(!jwt){
-
     const reqBody = {
     "username":username,
     "password":password
   };
-  
   fetch('api/auth/login',{
     headers:{
       "Content-Type":"application/json"
@@ -40,31 +38,65 @@ function sendLoginRequest(){
  }).catch((message)=> {
     alert(message)
  } );
-}
 };
 return (
         <>
-        <div>
-            <label htmlFor='username'>Username</label>
-            <input
+        <Container className='mt-5'>
+          <Row className='justify-content-center align-items-center'>
+            <Col md="8" lg="6">
+            <Form.Group 
+            className="mb-3 " 
+            controlId="username">
+            <Form.Label className='fs-4'>
+              Username
+            </Form.Label>
+            <Form.Control
             type="email"
-            id="username"
+            size='lg'
+            placeholder='Enter email'
             value={username}
             onChange={(event)=> setUsername(event.target.value)}/>
-        </div>
-        <div>
-            <label htmlFor='password'>Passowrd</label>
-            <input
+</Form.Group>
+            </Col>
+          </Row>
+
+          <Row className='justify-content-center align-items-center'>
+          <Col md="8"lg="6">
+            <Form.Group 
+            className="mb-3"
+            controlId="password">
+            <Form.Label className='fs-4'>Passoword</Form.Label>
+            <Form.Control
             type="password"
-            id="password"
+            size='lg'
+            placeholder='Enter password'
             value={password}
             onChange={(event)=> setPassword(event.target.value)}/>
-        </div>
-        <div>
-            <button id="submit" type='button' onClick={() => sendLoginRequest()}>
+</Form.Group>
+</Col>
+</Row>
+<Row className='justify-content-center align-items-center'>
+  <Col md="8" lg="6" className='mt-2 d-flex flex-column gap-4 flex-md-row justify-content-md-between'>
+            <Button
+            id="submit"
+            type='button'
+            size='lg'
+            onClick={() => sendLoginRequest()}>
             Login
-            </button>
-        </div>
+            </Button>
+
+            <Button
+            variant='secondary'
+            id="submit"
+            type='button'
+            size='lg'
+            onClick={() => sendLoginRequest()}>
+            Exit
+            </Button>
+  </Col>
+</Row>
+
+        </Container>
         </>
     );
 };

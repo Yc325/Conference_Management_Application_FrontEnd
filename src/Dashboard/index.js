@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLocalState } from '../util/useLocalStorage';
+import ajax from '../Services/fetchService';
 
 const Dashboard = () => {
 
@@ -12,35 +13,19 @@ const Dashboard = () => {
     const[author,setAuthor] = useState(null)
 
     useEffect(()=> {
-        fetch("/api/papers",{
-            headers:{
-                "Content-Type":"application/json",
-                Authorization:`Bearer ${jwt}`,
-            },
-            method:"GET",
-        }).then(response => {
-             if (response.status === 200) return response.json()
-            }).then(paperData => {
-                setPapers(paperData);
+      ajax("/api/papers","GET",jwt)
+      .then(paperData => {
+      setPapers(paperData);
             })
     },[])
 
     function createPaper(){
-        fetch("/api/papers", {
-            headers:{
-                "Content-Type":"application/json",
-                Authorization :`Bearer ${jwt}`,
-
-            },
-            method:"POST",
-
-        }).then(response=>{
-            if (response.status === 200) return response.json()
-
-        }).then(paper => {
-            window.location.href = `/papers/${paper.id}`;
-        })
+      ajax("/api/papers","POST",jwt)
+      .then(paper => {
+        window.location.href = `/papers/${paper.id}`;
+      })
     }
+
     return (
 <div>
 <div style={{
@@ -52,9 +37,8 @@ const Dashboard = () => {
 {papers ? (
   papers.sort((a, b) => a.id - b.id)
   .map((paper) =>(
-    <div style={{ 
-      backgroundColor: "#F7F7F7", 
-      backgroundImage: "url('https://www.example.com/background-pattern.jpg')",
+    <div key={paper.id} style={{ 
+      backgroundColor: "#F7F7F7",
       padding: "20px",
       borderRadius: "10px",
       boxShadow: "0 2px 10px rgba(0,0,0,0.1)",

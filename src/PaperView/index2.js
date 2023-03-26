@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocalState } from '../util/useLocalStorage';
+import ajax from '../Services/fetchService';
+
 
 const PaperView = () => {
     const paperId = window.location.href.split("/")[4]
@@ -10,22 +12,13 @@ const PaperView = () => {
     const [file,setFile] = useState(null);
 
     useEffect(() => {
-      fetch(`/api/papers/${paperId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwt}`,
-        },
-        method: "GET",
-      })
-        .then((response) => {
-          if (response.status === 200) return response.json();
-        })
-        .then((paperData) => {
-          setPaper(paperData);
-          setFile(paperData.file);
-          setIsLoading(false); // Set loading state to false when data has been fetched
-        });
-    }, []);
+      ajax(`/api/papers/${paperId}`,"GET",jwt)
+      .then((paperData) => {
+        setPaper(paperData);
+        setFile(paperData.file);
+        setIsLoading(false); // Set loading state to false when data has been fetched
+      });
+  }, []);
 
 
     function downloadFile() {
@@ -91,24 +84,27 @@ style={{
           margin: 0,
           padding: 0
         }}>
-          {paper.authors ? (
-            paper.authors.map((author) => (
-              <li key={author.id} style={{ 
-                fontSize: "16px",
-                color: "#333",
-                marginBottom: "5px"
-              }}>
-                {author.username}
-              </li>
-            ))
-          ) : (
-            <li style={{ 
-              fontSize: "16px",
-              color: "#999"
-            }}>
-              Unknown
-            </li>
-          )}
+
+{paper.authors ? (
+  <>
+    {Array.from(new Set(paper.authors.map(author => author.username))).map((name) => (
+      <li key={name} style={{ 
+        fontSize: "16px",
+        color: "#333",
+        marginBottom: "5px"
+      }}>
+        {name}
+      </li>
+    ))}
+  </>
+) : (
+  <li style={{ 
+    fontSize: "16px",
+    color: "#999"
+  }}>
+    Unknown
+  </li>
+)}
         </ul>
     <h2 
     style={{

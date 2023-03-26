@@ -1,4 +1,4 @@
- import { useEffect} from 'react';
+import { useEffect} from 'react';
 import './App.css';
 import { useLocalState } from './util/useLocalStorage';
 import {Routes,Route} from "react-router-dom";
@@ -9,6 +9,7 @@ import PrivateRoute from './PrivateRoute';
 import PaperSubmit from './PaperView';
 import PaperView from './PaperView/index2';
 import PaperEdit from './PaperView/index1';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 
