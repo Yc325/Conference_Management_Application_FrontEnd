@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocalState } from '../util/useLocalStorage';
 import ajax from '../Services/fetchService';
+import {Button,Form, Container,Card,ListGroup,Badge} from 'react-bootstrap'
 
 
 const PaperView = () => {
@@ -41,109 +42,66 @@ const PaperView = () => {
     });
 }
     return (
-<div style={{ 
-    backgroundColor: "#F7F7F7", 
-    backgroundImage: "url('https://www.example.com/background-pattern.jpg')",
-    padding: "20px",
-    borderRadius: "10px",
-    boxShadow: "0 2px 10px rgba(0,0,0,0.1)"}}>
-        {isLoading ? ( // Display loading state if data has not been loaded yet
-          <h1>Loading...</h1>
-        ) : (
-          <>
-          {console.log(paper)}
-<div 
-style={{
-  backgroundColor: "white",
-  padding: "30px",
-  borderRadius: "10px",
-  boxShadow: "0 2px 5px rgba(0,0,0,0.1)"
-      }}>
-        <h1 style={{ 
-          fontSize: "36px",
-          color: "#333"
-        }}>
-          Paper {paperId}
-        </h1>
-        <h2 style={{ 
-          fontSize: "24px",
-          color: "#666",
-          marginBottom: "20px"
-        }}>
-          {paper.name} 
-        </h2>
-        <h3 style={{ 
-          fontSize: "18px",
-          color: "#999",
-          marginBottom: "10px"
-        }}>
-          Author:
-        </h3>
-        <ul style={{ 
-          listStyle: "none",
-          margin: 0,
-          padding: 0
-        }}>
-
-{paper.authors ? (
-  <>
-    {Array.from(new Set(paper.authors.map(author => author.username))).map((name) => (
-      <li key={name} style={{ 
-        fontSize: "16px",
-        color: "#333",
-        marginBottom: "5px"
-      }}>
-        {name}
-      </li>
-    ))}
-  </>
+<div>
+{isLoading ? ( // Display loading state if data has not been loaded yet
+<h1>Loading...</h1>
 ) : (
-  <li style={{ 
-    fontSize: "16px",
-    color: "#999"
-  }}>
-    Unknown
-  </li>
-)}
-        </ul>
-    <h2 
-    style={{
-      fontSize: "20px", marginBottom: "10px"
-      }}>
-        Status: {paper.status}</h2>
-    <span style={{fontSize: "18px"}}>
-    <h3 style={{
-      fontSize: "18px",
-      color: "#999"}}>
-        File Name: 
-        </h3>
-        {paper.file.fileName} 
-        <button style={{background: "#2ecc71", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginLeft: "20px", border: "none", outline: "none", cursor: "pointer", boxShadow: "0px 5px 10px rgba(0, 0, 0, 0.2)"}} onClick={() => downloadFile()}>
-            Download
-        </button>
-    </span>
-</div>
-<div style={{marginTop: "30px"}}>
-    <h1 style={{fontSize: "30px", marginBottom: "20px", textTransform: "uppercase"}}>Comments</h1>
+<>
+<Container className='mt-5'>
+<Card style={{ width: '100%'}}>
+      <Card.Body>
+        <Card.Title>Paper {paperId}</Card.Title>
+        <Card.Subtitle className="mb-2 text-muted">{paper.name}</Card.Subtitle>
+        <Card.Subtitle className="mb-2 text-muted">
+          Paper Status
+          <Badge 
+          style={{marginLeft:"1em"}}
+          pill
+          bg={paper.status === "Submitted" ? "success" : paper.status === "Needs to be submitted" ? "danger" : "gray" }>
+          {paper.status}
+          </Badge>
+          </Card.Subtitle>
+        <Card.Text>
+        Authors:
+         <ListGroup>
+        {paper.authors ? (
+          <>
+        {Array.from(new Set(paper.authors.map(author => author.username))).map((name) => (
+        <ListGroup.Item action variant="secondary">{name}</ListGroup.Item>
+        ))}
+        </>
+        ) : (
+        <ListGroup.Item action variant="danger">Unknown</ListGroup.Item>
+        )}
+      </ListGroup>
+        </Card.Text>
+        <Card.Subtitle className="mb-2 text-muted justify-content-center">
+          File Name: {paper.file.fileName}
+          </Card.Subtitle>
+          <Button onClick={() => downloadFile()}>Download</Button>
+      </Card.Body>
+    </Card>
+</Container>
+<Container>
+    <h1>Comments</h1>
     {paper.comments ? (
         paper.comments.map((comment, index) => (
-            <div key={index} style={{background: "#f1f1f1", padding: "10px", marginBottom: "10px", borderRadius: "5px", boxShadow: "0px 5px 10px rgba(0, 0, 0, 0.1)"}}>
-                <h2 style={{fontSize: "20px", marginBottom: "10px"}}>Comment {index + 1}</h2>
-                <p style={{fontSize: "16px", lineHeight: "1.5"}}>{comment}</p>
+            <div key={index}>
+                <h2>Comment {index + 1}</h2>
+                <p>{comment}</p>
             </div>
         ))
     ) : (
-        <div style={{background: "#f1f1f1", padding: "10px", marginBottom: "10px", borderRadius: "5px", boxShadow: "0px 5px 10px rgba(0, 0, 0, 0.1)"}}>
-            <h2 style={{fontSize: "20px", marginBottom: "10px"}}>No comments</h2>
-            <p style={{fontSize: "16px", lineHeight: "1.5"}}>Be the first to comment!</p>
+        <div>
+            <h2>No comments</h2>
+            <p>Be the first to comment!</p>
         </div>
     )}
-</div>
-
-
-
+</Container>
           </>
+
         )}
+        
       </div>
     );
   }

@@ -3,7 +3,7 @@ import { useLocalState } from '../util/useLocalStorage';
 import ajax from '../Services/fetchService';
 import {Button,Card,Badge,Row,Col} from 'react-bootstrap'
 
-const Dashboard = () => {
+const ReviwerDashboard = () => {
 
     const [jwt,setJwt] = useLocalState("","jwt")
 
@@ -31,9 +31,6 @@ const Dashboard = () => {
 <div style={{margin: "2em"}}>
 <Row>
 <Col>
-<Button size="lg" variant="success" style={{margin:"1em"}} onClick={() => createPaper()}>
-Create new Paper 
-</Button>
 <Button size='lg'onClick={()=>{
   setJwt(null) 
   window.location.href= '/login'}}>
@@ -99,4 +96,4 @@ Logout
   );
 };
 
-export default Dashboard;
+export default ReviwerDashboard;

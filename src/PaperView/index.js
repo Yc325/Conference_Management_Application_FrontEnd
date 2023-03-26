@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocalState } from '../util/useLocalStorage';
+import {Button,Form, Container} from 'react-bootstrap'
 
 const PaperSubmit = () => {
     const paperId = window.location.href.split("/papers/")[1]
@@ -22,7 +23,7 @@ function onFileChangeHandler(){
         }).then(res => {
             if(res.ok) {
                 alert("File uploaded successfully.")
-                window.location.href = "dashboard";
+                window.location.href = "/dashboard";
             }
         });
     };
@@ -43,25 +44,27 @@ function onFileChangeHandler(){
 
     return (
         <div>
+        <Container className='mt-5'>
             <h1>Paper {paperId}</h1>
             {paper ? (
             <>
             <div>
-            <label htmlFor='file'>Your File</label>
-            <input
-            type="file"
-            id="uploadPaper"
+            <Form.Group controlId="formFileLg" className="mb-3">
+            <Form.Label>Upload You Paper</Form.Label>
+            <Form.Control type="file" size="lg" id="uploadPaper"
             accept=".pdf"
             onChange={(event)=> setFile(event.target.files[0])}/>
+            </Form.Group>
             </div>
             <div>
-            <button id="submit" type='button'onClick={() => onFileChangeHandler()}>
+            <Button size="lg" id="submit" type='button'onClick={() => onFileChangeHandler()}>
             Submit File
-            </button>
-
+            </Button>
             </div>
 
             </>) : (<></>)}
+        
+            </Container>
 
         </div>
     );

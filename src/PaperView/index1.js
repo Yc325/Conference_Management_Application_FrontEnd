@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ajax from '../Services/fetchService';
-
+import {Button,Form, ListGroup,Card, Container} from 'react-bootstrap'
 import { useLocalState } from '../util/useLocalStorage';
 
 const PaperEdit = () => {
@@ -33,116 +33,50 @@ const PaperEdit = () => {
       }, []);
 
     return (
-<div style={{ 
-  backgroundColor: "#F7F7F7",
-  padding: "20px",
-  borderRadius: "10px",
-  boxShadow: "0 2px 10px rgba(0,0,0,0.1)"
-}}>
+<div>
   {isLoading ? ( 
     <h1>Loading...</h1>
   ) : (
     <>
-      <div style={{ 
-        backgroundColor: "white",
-        padding: "30px",
-        borderRadius: "10px",
-        boxShadow: "0 2px 5px rgba(0,0,0,0.1)"
-      }}>
-
-        <h1 style={{ 
-          fontSize: "36px",
-          color: "#333"
-        }}>
-          Paper {paperId}
-        </h1>
-
-        <h2 style={{ 
-          fontSize: "24px",
-          color: "#666",
-          marginBottom: "20px"
-        }}>
-          {paper.name} 
-        </h2>
-
-        <h3 style={{ 
-          fontSize: "18px",
-          color: "#999",
-          marginBottom: "10px"
-        }}>
-          Author:
-        </h3>
-
-        <ul style={{ 
-          listStyle: "none",
-          margin: 0,
-          padding: 0
-        }}>
-
-{paper.authors ? (
-  <>
-    {Array.from(new Set(paper.authors.map(author => author.username))).map((name) => (
-      <li key={name} style={{ 
-        fontSize: "16px",
-        color: "#333",
-        marginBottom: "5px"
-      }}>
-        {name}
-      </li>
-    ))}
-  </>
-) : (
-  <li style={{ 
-    fontSize: "16px",
-    color: "#999"
-  }}>
-    Unknown
-  </li>
-)}
-        </ul>
-        <div style={{ 
-          marginTop: "30px"
-        }}>
-
-          <label htmlFor="author" style={{ 
-            fontSize: "16px",
-            color: "#333",
-            marginRight: "10px"
-          }}>
-            Add Author:
-          </label>
-
-          <input
+      <Container className='mt-5 '>
+      <Card style={{ width: '100%' }}>
+      <Card.Body>
+        <Card.Title>Paper {paperId}</Card.Title>
+        <Card.Subtitle className="mb-2 text-muted">{paper.name}</Card.Subtitle>
+        <Card.Text>
+         Authors:
+         <ListGroup>
+        {paper.authors ? (
+          <>
+        {Array.from(new Set(paper.authors.map(author => author.username))).map((name) => (
+        <ListGroup.Item action variant="secondary">{name}</ListGroup.Item>
+        ))}
+        </>
+        ) : (
+        <ListGroup.Item action variant="danger">Unknown</ListGroup.Item>
+        )}
+      </ListGroup>
+        </Card.Text>
+        <Form>
+      <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Label>Add Author</Form.Label>
+        <Form.Control 
             type="email" 
             id="author" 
             placeholder="Username"
             value={username}
-            onChange={(event) => setUsername(event.target.value)}
-            style={{ 
-              fontSize: "16px",
-              padding: "5px",
-              borderRadius: "5px",
-              border: "1px solid #ccc",
-              marginRight: "10px"
-            }}/>
-
-          <button 
+            onChange={(event) => setUsername(event.target.value)}/>
+        </Form.Group>
+        </Form>
+        <Button
             id="submit" 
             type='button' 
-            onClick={() => sendSetUserReq()}
-            style={{ 
-              fontSize: "16px",
-              padding: "10px 20px",
-              borderRadius: "5px",
-              backgroundColor: "#333",
-              color: "white",
-              border: "none"
-            }}>
+            onClick={() => sendSetUserReq()}>
             Add Author
-          </button>
-
-        </div>
-      </div>
+          </Button>
+      </Card.Body>
+    </Card>
+      </Container>
     </>
   )}
 </div>

@@ -3,7 +3,7 @@ import { useLocalState } from '../util/useLocalStorage';
 import ajax from '../Services/fetchService';
 import {Button,Card,Badge,Row,Col} from 'react-bootstrap'
 
-const Dashboard = () => {
+const ConfChairDashboard = () => {
 
     const [jwt,setJwt] = useLocalState("","jwt")
 
@@ -99,4 +99,4 @@ Logout
   );
 };
 
-export default Dashboard;
+export default ConfChairDashboard;
