@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocalState } from '../util/useLocalStorage';
 import ajax from '../Services/fetchService';
-import {Button,Form, Container,Card,ListGroup,Badge} from 'react-bootstrap'
+import {Button,Row,Col, Container,Card,ListGroup,Badge} from 'react-bootstrap'
 
 
 const PaperView = () => {
@@ -78,7 +78,16 @@ const PaperView = () => {
         <Card.Subtitle className="mb-2 text-muted justify-content-center">
           File Name: {paper.file.fileName}
           </Card.Subtitle>
-          <Button onClick={() => downloadFile()}>Download</Button>
+          <Row>
+            <Col className='d-flex flex justify-content-between'>
+            <Button size="lg" onClick={() => downloadFile()}>Download</Button>
+            <Button  variant="secondary" size='lg'onClick={()=>{
+            window.location.href= '/dashboard'}}>
+            Back
+          </Button>
+            </Col>
+          </Row>
+
       </Card.Body>
     </Card>
 </Container>

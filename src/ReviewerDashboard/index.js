@@ -13,7 +13,7 @@ const ReviwerDashboard = () => {
     const[author,setAuthor] = useState(null)
 
     useEffect(()=> {
-      ajax("/api/papers","GET",jwt)
+      ajax("/api/papers/assigned","GET",jwt)
       .then(paperData => {
       setPapers(paperData);
             })

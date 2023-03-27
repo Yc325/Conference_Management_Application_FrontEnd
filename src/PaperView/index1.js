@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ajax from '../Services/fetchService';
-import {Button,Form, ListGroup,Card, Container} from 'react-bootstrap'
+import {Button,Form, ListGroup,Card, Container,Row, Col} from 'react-bootstrap'
 import { useLocalState } from '../util/useLocalStorage';
 
 const PaperEdit = () => {
@@ -68,12 +68,22 @@ const PaperEdit = () => {
             onChange={(event) => setUsername(event.target.value)}/>
         </Form.Group>
         </Form>
-        <Button
+        <Row>
+          <Col className='d-flex flex justify-content-between'>
+          <Button
+            size="lg"
             id="submit" 
             type='button' 
             onClick={() => sendSetUserReq()}>
             Add Author
           </Button>
+          <Button  variant="secondary" size='lg'onClick={()=>{
+          window.location.href= '/dashboard'}}>
+          Back
+         </Button>
+          </Col>
+        </Row>
+
       </Card.Body>
     </Card>
       </Container>

@@ -34,24 +34,24 @@ function getRolesFromJWT (){
   return (
     <Routes>
 <Route path="/dashboard" element={
-  roles.find((role)=> role === "ROLE_REVIEWER")  ? (
+  roles.find((role)=> role === "ROLE_REVIEWER") ? (
     <PrivateRoute>
       <ReviwerDashboard/>
     </PrivateRoute>
-  ) : roles === "ROLE_CONF_CHAIR" ? (
+  ) : roles.find((role)=> role  === "ROLE_CONF_CHAIR") ? (
     <PrivateRoute>
       <ConfChairDashboard/>
     </PrivateRoute>
-  ) : roles === "ROLE_SYS_ADMIN" ?
+  ) : roles.find((role)=> role  ==="ROLE_SYS_ADMIN") ?
   (
     <PrivateRoute>
       <SysAdminDashboard/>
     </PrivateRoute>
-  ):(
+  ):roles.find((role)=> role  ==="ROLE_AUTHOR") ? (
     <PrivateRoute>
     <Dashboard/>
     </PrivateRoute>
-  )
+  ): <></>
 }/>
       <Route path ="/papers/:id" element={
         <PrivateRoute>

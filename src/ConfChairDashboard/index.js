@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocalState } from '../util/useLocalStorage';
 import ajax from '../Services/fetchService';
-import {Button,Card,Badge,Row,Col} from 'react-bootstrap'
+import {Button,Card,Container,Row,Col,ListGroup} from 'react-bootstrap'
 
 const ConfChairDashboard = () => {
 
@@ -13,7 +13,7 @@ const ConfChairDashboard = () => {
     const[author,setAuthor] = useState(null)
 
     useEffect(()=> {
-      ajax("/api/papers","GET",jwt)
+      ajax("/api/papers/all","GET",jwt)
       .then(paperData => {
       setPapers(paperData);
             })
@@ -30,73 +30,102 @@ const ConfChairDashboard = () => {
 
 <div style={{margin: "2em"}}>
 <Row>
-<Col>
-<Button size="lg" variant="success" style={{margin:"1em"}} onClick={() => createPaper()}>
-Create new Paper 
-</Button>
+<Col className='d-flex flex justify-content-evenly'>
 <Button size='lg'onClick={()=>{
   setJwt(null) 
   window.location.href= '/login'}}>
-Logout
+  Logout
+</Button>
+
+<Button size='lg'onClick={()=>{
+  console.log("")}}>
+  Auto Assign 
 </Button>
 
   </Col>
 </Row>
 
 
+
 {papers ? (
-  <div 
-  className='d-grid gap-5'
-  style={{gridTemplateColumns:"repeat(auto-fill,18rem)"}}>
-{papers.sort((a, b) => a.id - b.id)
-  .map((paper) =>(
-    
-    
-      <Card key={paper.id} style={{ width: '20rem' }}>
-      <Card.Body>
-        <Card.Title>Paper {paper.id}</Card.Title>
+  <div className='d-flex flex-column gap-5'>
+    {/* Accepted Papers */}
+    {papers.filter((paper) => paper.conferenceManagementDecision === true && paper.status !== 'Needs to be submitted').length > 0 && (
+      <div style={{ marginTop: '2rem',border:"1px dashed lightgrey" }}>
+        <h1>Accepted Papers</h1>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, 18rem)', gap: '1rem' }}>
+          {papers
+            .filter((paper) => paper.conferenceManagementDecision === true && paper.status !== 'Needs to be submitted')
+            .map((paper) => (
+              <div key={paper.id}>
+                <Card style={{ width: '100%', alignItems: 'center' }}>
+                  <Card.Body>
+                    <Card.Title>Paper {paper.id}</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">{paper.name}</Card.Subtitle>
+                    <Card.Link href={`/papers/${paper.id}/view`}>
+                      <Button>View Paper</Button>
+                    </Card.Link>
+                  </Card.Body>
+                </Card>
+              </div>
+            ))}
+        </div>
+      </div>
+    )}
 
-        <Card.Subtitle className="mb-2 text-muted">
-          Paper Status
-          <Badge 
-          style={{marginLeft:"1em"}}
-          pill
-          bg={paper.status === "Submitted" ? "success" : paper.status === "Needs to be submitted" ? "danger" : "gray" }>
-          {paper.status}
-          </Badge>
-          </Card.Subtitle>
+    {/* Rejected Papers */}
+    {papers.filter((paper) => paper.conferenceManagementDecision === false && paper.status !== 'Needs to be submitted').length > 0 && (
+      <div style={{ marginTop: '2rem',border:"1px dashed lightgrey"}}>
+        <h1>Rejected Papers</h1>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, 18rem)', gap: '1rem' }}>
+          {papers
+            .filter((paper) => paper.conferenceManagementDecision === false && paper.status !== 'Needs to be submitted')
+            .map((paper) => (
+              <div key={paper.id}>
+                <Card style={{ width: '100%', alignItems: 'center' }}>
+                  <Card.Body>
+                    <Card.Title>Paper {paper.id}</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">{paper.name}</Card.Subtitle>
+                    <Card.Link href={`/papers/${paper.id}/view`}>
+                      <Button>View Paper</Button>
+                    </Card.Link>
+                  </Card.Body>
+                </Card>
+              </div>
+            ))}
+        </div>
+      </div>
+    )}
 
-        <Card.Subtitle className="mb-2 text-muted">
-          Paper Score: {paper.score}
-          </Card.Subtitle>
-
-        <Card.Subtitle className="mb-2 text-muted">
-          Paper Name: {paper.name}
-          </Card.Subtitle>
-
-      {paper.status === "Needs to be submitted" ? 
-      <Card.Link href={`/papers/${paper.id}`}>
-      <Button variant="dark">Submit Paper</Button>
-      </Card.Link> 
-      :<>
-      <Card.Link href={`/papers/${paper.id}/view`}>
-      <Button>View Paper</Button>
-      </Card.Link>
-      <Card.Link href={`/papers/${paper.id}/edit`}>
-      <Button variant="secondary">Add Author</Button>
-      </Card.Link>
-      </>}
-      </Card.Body>
-    </Card>
-
-)
+    {/* Pending Papers */}
+    {papers.filter((paper) => paper.conferenceManagementDecision === null && paper.status !== 'Needs to be submitted').length > 0 && (
+      <div style={{ marginTop: '2rem',border:"1px dashed lightgrey"}}>
+        <h1>Pending Papers</h1>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, 18rem)', gap: '1rem' }}>
+          {papers
+            .filter((paper) => paper.conferenceManagementDecision === null && paper.status !== 'Needs to be submitted')
+            .map((paper) => (
+              <div key={paper.id}>
+                <Card style={{ width: '100%', alignItems: 'center' }}>
+                  <Card.Body>
+                    <Card.Title>Paper {paper.id}</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">{paper.name}</Card.Subtitle>
+                    <Card.Link href={`/papers/${paper.id}/view`}>
+                      <Button>View Paper</Button>
+                    </Card.Link>
+                  </Card.Body>
+                </Card>
+              </div>
+            ))}
+        </div>
+      </div>
+    )}
+  </div>
+) : (
+  <></>
 )}
-</div>
-)
-: (<></>)}
-</div>
 
-  );
-};
+</div>
+    )}
 
 export default ConfChairDashboard;

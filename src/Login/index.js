@@ -86,11 +86,9 @@ return (
             </Button>
 
             <Button
-            variant='secondary'
-            id="submit"
-            type='button'
-            size='lg'
-            onClick={() => sendLoginRequest()}>
+            variant="secondary"
+            size='lg'onClick={()=>{
+            window.location.href= '/'}}>
             Exit
             </Button>
   </Col>
