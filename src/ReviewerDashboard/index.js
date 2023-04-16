@@ -9,22 +9,13 @@ const ReviwerDashboard = () => {
 
     const [papers,setPapers] = useState(null)
 
-    const[paperName,setPaperName] = useState(null)
-    const[author,setAuthor] = useState(null)
 
     useEffect(()=> {
-      ajax("/api/papers/assigned","GET",jwt)
+      ajax("/api/papers/reviewer","GET",jwt)
       .then(paperData => {
       setPapers(paperData);
             })
     },[])
-
-    function createPaper(){
-      ajax("/api/papers","POST",jwt)
-      .then(paper => {
-        window.location.href = `/papers/${paper.id}`;
-      })
-    }
 
     return (
 
@@ -36,7 +27,6 @@ const ReviwerDashboard = () => {
   window.location.href= '/login'}}>
 Logout
 </Button>
-
   </Col>
 </Row>
 

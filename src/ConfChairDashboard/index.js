@@ -12,6 +12,8 @@ const ConfChairDashboard = () => {
     const[paperName,setPaperName] = useState(null)
     const[author,setAuthor] = useState(null)
 
+    const [reviwers,setReviwers] = useState(null)
+
     useEffect(()=> {
       ajax("/api/papers/all","GET",jwt)
       .then(paperData => {
@@ -19,11 +21,12 @@ const ConfChairDashboard = () => {
             })
     },[])
 
-    function createPaper(){
-      ajax("/api/papers","POST",jwt)
-      .then(paper => {
-        window.location.href = `/papers/${paper.id}`;
-      })
+    function getList(){
+   ajax("/api/papers/reviwers","get",jwt)
+   .then(rev_list =>{
+    setReviwers(rev_list)
+    console.log(rev_list)
+   })
     }
 
     return (
@@ -37,8 +40,8 @@ const ConfChairDashboard = () => {
   Logout
 </Button>
 
-<Button size='lg'onClick={()=>{
-  console.log("")}}>
+<Button size='lg'
+  onClick={() => getList()}>
   Auto Assign 
 </Button>
 
