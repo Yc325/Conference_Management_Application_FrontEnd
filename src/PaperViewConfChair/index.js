@@ -4,7 +4,7 @@ import ajax from '../Services/fetchService';
 import {Button,Row,Col, Container,Card,ListGroup,Badge} from 'react-bootstrap'
 
 
-const PaperView = () => {
+const PaperViewConfChair = () => {
     const paperId = window.location.href.split("/")[4]
 
     const [jwt,setJwt] = useLocalState("","jwt")
@@ -21,7 +21,6 @@ const PaperView = () => {
       });
   }, []);
 
-  //const decisionText = paper.conferenceManagementDecision === null ? "Pending" : "Decision made";
 
     function downloadFile() {
         fetch(`/api/papers/dowloadFile/${file.id}`, {
@@ -48,8 +47,6 @@ const PaperView = () => {
 <h1>Loading...</h1>
 ) : (
 <>
-{console.log(paper)}
-
 <Container className='mt-5'>
 <Card style={{ width: '100%'}}>
       <Card.Body>
@@ -64,17 +61,6 @@ const PaperView = () => {
           {paper.status}
           </Badge>
           </Card.Subtitle>
-          <Card.Subtitle className='mb-2 text-muted'>
-            Conference Chair Decesion
-          <Badge 
-          style={{marginLeft:"1em"}}
-          pill
-          bg={paper.conferenceManagementDecision === true ? "success" : paper.conferenceManagementDecision === false ? "danger" : paper.conferenceManagementDecision === null ? "secondary" : "warning" }
-          >
-          {paper.conferenceManagementDecision === true ? "Accepted" : paper.conferenceManagementDecision === false ? "Rejected" : paper.conferenceManagementDecision === null ? "Pending" : "Undefined"}
-          </Badge>
-          </Card.Subtitle>
-
         <Card.Text>
         Authors:
          <ListGroup>
@@ -93,8 +79,14 @@ const PaperView = () => {
           File Name: {paper.file.fileName}
           </Card.Subtitle>
           <Row>
-            <Col className='d-flex flex justify-content-between'>
+            <Col className='d-flex flex justify-content-center gap-5'>
             <Button size="lg" onClick={() => downloadFile()}>Download</Button>
+            <Button variant="danger" size="lg" onClick={() => console.log('Reject')}>Reject</Button>
+            <Button variant="success" size="lg" onClick={() => console.log('Accept')}>Accept</Button>
+            </Col>
+          </Row>
+          <Row style={{marginTop:"1em"}}>
+            <Col className='d-flex flex justify-content-end'>
             <Button  variant="secondary" size='lg'onClick={()=>{
             window.location.href= '/dashboard'}}>
             Back
@@ -129,5 +121,4 @@ const PaperView = () => {
     );
   }
 
-export default PaperView;
-
+export default PaperViewConfChair;

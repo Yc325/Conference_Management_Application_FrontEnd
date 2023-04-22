@@ -65,13 +65,23 @@ Logout
           {paper.status}
           </Badge>
           </Card.Subtitle>
+          <Card.Subtitle className='mb-2 text-muted'>
+          Conference Chair Decision
+          <Badge 
+          style={{marginLeft:"1em"}}
+          pill
+          bg={paper.conferenceManagementDecision === true ? "success" : paper.conferenceManagementDecision === false ? "danger" : paper.conferenceManagementDecision === null ? "secondary" : "warning" }
+          >
+          {paper.conferenceManagementDecision === true ? "Accepted" : paper.conferenceManagementDecision === false ? "Rejected" : paper.conferenceManagementDecision === null ? "Pending" : "Undefined"}
+          </Badge>
+          </Card.Subtitle>
 
         <Card.Subtitle className="mb-2 text-muted">
           Paper Score: {paper.score}
           </Card.Subtitle>
 
         <Card.Subtitle className="mb-2 text-muted">
-          Paper Name: {paper.name}
+        Paper Name: {paper.name.slice(0, 20) + (paper.name.length > 20 ? "..." : "")}
           </Card.Subtitle>
 
       {paper.status === "Needs to be submitted" ? 

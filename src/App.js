@@ -14,6 +14,8 @@ import jwt_decode from "jwt-decode";
 import ReviwerDashboard from './ReviewerDashboard';
 import ConfChairDashboard from './ConfChairDashboard';
 import SysAdminDashboard from './SysAdminDashboard';
+import PaperViewReviewer from './PaperViewReviewer';
+import PaperViewConfChair from './PaperViewConfChair';
 
 
 function App() {
@@ -53,14 +55,24 @@ function getRolesFromJWT (){
     </PrivateRoute>
   ): <></>
 }/>
+<Route path="/papers/:id/view" element={
+  roles.find((role)=> role === "ROLE_REVIEWER") ? (
+    <PrivateRoute>
+      <PaperViewReviewer/>
+    </PrivateRoute>
+  ) : roles.find((role)=> role  === "ROLE_CONF_CHAIR") ? (
+    <PrivateRoute>
+      <PaperViewConfChair/>
+    </PrivateRoute>
+  ):roles.find((role)=> role  ==="ROLE_AUTHOR") ? (
+    <PrivateRoute>
+    <PaperView/>
+    </PrivateRoute>
+  ): <></>
+}/>
       <Route path ="/papers/:id" element={
         <PrivateRoute>
           <PaperSubmit/>
-        </PrivateRoute>
-      }/>
-        <Route path ="/papers/:id/view" element={
-        <PrivateRoute>
-        <PaperView/>
         </PrivateRoute>
       }/>
         <Route path ="/papers/:id/edit" element={
