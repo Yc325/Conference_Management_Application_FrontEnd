@@ -3,12 +3,16 @@ import { useLocalState } from '../util/useLocalStorage';
 import ajax from '../Services/fetchService';
 import {Button,Row,Col, Container,Card,ListGroup,Badge} from 'react-bootstrap'
 import Rate from '../components/Rate';
+import { useParams } from 'react-router-dom';
+import Comment from '../components/Comment';
 
 
 
 
 const PaperViewReviewer = () => {
     const paperId = window.location.href.split("/")[4]
+
+    //const {paperId} = useParams();
 
     const [jwt,setJwt] = useLocalState("","jwt")
     const [paper,setPaper] = useState(null)
@@ -18,12 +22,56 @@ const PaperViewReviewer = () => {
     const [rating,setRating] = useState(0)
     const [avgRating,setAvgRating] = useState(0)
     const [paperID, setPapersID] = useState(null)
-    
+    const emptyComment = 
+    {
+      text: "",
+      paperId: paperId !=null ? parseInt(paperId):null,
+      user: jwt
+    }
+
+    const [comment,setComment] = useState(emptyComment)
+
+    const [comments, setComments] = useState([])
+
+
+
+function submitComment(){
+  ajax("/api/comments",'post',jwt,comment).then((data)=>
+  {
+  const commentsCopy = [...comments]
+  commentsCopy.push(data)
+  setComments(commentsCopy)
+  setComment(emptyComment)
+}
+)}
+
+
+function updateComment(value){
+  const commentCopy = { ...comment }
+  commentCopy.text = value
+  setComment(commentCopy)
+}
+
+function handleDeleteComment(commentId){
+  ajax(`/api/comments?commentId=${commentId}`,"delete", jwt).then(()=>{
+    const commentsCopy = [...comments];
+    const i = commentsCopy.findIndex((d)=> d.id === commentId);
+    commentsCopy.splice(i,1);
+    setComments(commentsCopy)
+
+   })
+  
+}
+
+useEffect(()=>{
+  ajax(`/api/comments?paperId=${paperId}`,"get",jwt).then((commentData)=>{
+    setComments(commentData)
+  })
+},[]);
 
     useEffect(() => {
       ajax(`/api/papers/${paperId}`,"GET",jwt)
       .then((paperData) => {
-        console.log(paperData)
         setPaper(paperData);
         setFile(paperData.file);
         setIsLoading(false); // Set loading state to false when data has been fetched
@@ -61,7 +109,6 @@ useEffect(()=> {
   }).then(response => {
        if (response.status === 200) return response.json()
       }).then(rating => {
-        console.log(rating)
         setAvgRating(rating);
       })
 },[])
@@ -78,7 +125,6 @@ useEffect(()=> {
           method: "GET"
         })
           .then((response) => {
-            console.log(response)
             const filename =  response.headers.get('Content-Disposition').split('filename=')[1];
         response.blob().then(blob => {
           let url=  window.URL.createObjectURL(blob);
@@ -95,7 +141,6 @@ function setScore(rate){
   setRating(rate)
   ajax(`/api/score/${rate}/${paperId}`,"post",jwt)
   .then(rev_list =>{
-    console.log(rev_list)
     window.location.reload(false);
    })  
 }
@@ -141,7 +186,7 @@ function setScore(rate){
           <Row>
             <Col className='d-flex flex justify-content-between'>
             <Button size="lg" onClick={() => downloadFile()}>Download</Button>
-            <Button  variant="secondary" size='lg'onClick={()=>{
+            <Button  variant="secondary" size='lg' onClick={()=>{
             window.location.href= '/dashboard'}}>
             Back
           </Button>
@@ -166,33 +211,48 @@ function setScore(rate){
             </>}
           </Col>
         </Row> 
+        </>
+        : <>
+        </>}
         <Row style={{marginTop:'1em'}}>
           <Col className='d-flex flex justify-content-center'>
           <p>Avarage Rating - {avgRating}</p>
           </Col>
         </Row>
-        </>
-        : <>
-        </>}
 
       </Card.Body>
     </Card>
 </Container>
 <Container>
     <h1>Comments</h1>
-    {paper.comments ? (
-        paper.comments.map((comment, index) => (
-            <div key={index}>
-                <h2>Comment {index + 1}</h2>
-                <p>{comment}</p>
-            </div>
-        ))
-    ) : (
-        <div>
-            <h2>No comments</h2>
-            <p>Be the first to comment!</p>
+    {resultOfBoll ? 
+         <>
+         {/* Comments  */}
+        <div className='mt-4'>
+          <textarea style={{width: "100%", borderRadius: "0.25em"}}
+          onChange={(e) => updateComment(e.target.value)}
+          value = {comment.text}
+          />
+          <Button onClick={()=> submitComment()}>
+          Post Comment
+          </Button>
+
         </div>
-    )}
+        </>
+        : <>
+        </>}
+        <div className='mt-5'>
+      {comments.map((commentView) => (
+        <Comment createdDate = {commentView.postedAt}
+        createdBy = {commentView.reviewer.username}
+        text = {commentView.comment}
+        emitDeleteComment = {handleDeleteComment}
+        id = {commentView.id}
+        jwt = {jwt}
+        />
+      ))}
+
+    </div>
 </Container>
           </>
 
