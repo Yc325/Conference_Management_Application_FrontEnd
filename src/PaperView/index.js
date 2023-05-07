@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocalState } from '../util/useLocalStorage';
 import {Button,Form, Container} from 'react-bootstrap'
+import NavBar from '../components/NavBar';
 
 const PaperSubmit = () => {
     const paperId = window.location.href.split("/papers/")[1]
@@ -44,6 +45,9 @@ function onFileChangeHandler(){
 
     return (
         <div>
+        <NavBar 
+        jwt = {jwt}
+        />
         <Container className='mt-5'>
             <h1>Paper {paperId}</h1>
             {paper ? (

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocalState } from '../util/useLocalStorage';
 import ajax from '../Services/fetchService';
 import {Button,Card,Container,Row,Col,ListGroup} from 'react-bootstrap'
+import NavBar from '../components/NavBar';
 
 const ConfChairDashboard = () => {
 
@@ -30,15 +31,12 @@ const ConfChairDashboard = () => {
     }
 
     return (
+<>
+<NavBar jwt = {jwt}/>
 
 <div style={{margin: "2em"}}>
 <Row>
 <Col className='d-flex flex justify-content-evenly'>
-<Button size='lg'onClick={()=>{
-  setJwt(null) 
-  window.location.href= '/login'}}>
-  Logout
-</Button>
 
 <Button size='lg'
   onClick={() => getList()}>
@@ -129,6 +127,7 @@ const ConfChairDashboard = () => {
 )}
 
 </div>
+</>
     )}
 
 export default ConfChairDashboard;

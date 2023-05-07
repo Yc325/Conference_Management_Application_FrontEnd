@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocalState } from '../util/useLocalStorage';
 import ajax from '../Services/fetchService';
 import {Button,Card,Badge,Row,Col} from 'react-bootstrap'
+import NavBar from '../components/NavBar';
 
 const Dashboard = () => {
 
@@ -27,19 +28,16 @@ const Dashboard = () => {
     }
 
     return (
+<>
+<NavBar jwt = {jwt}/>
 
 <div style={{margin: "2em"}}>
+
 <Row>
 <Col>
 <Button size="lg" variant="success" style={{margin:"1em"}} onClick={() => createPaper()}>
 Create new Paper 
 </Button>
-<Button size='lg'onClick={()=>{
-  setJwt(null) 
-  window.location.href= '/login'}}>
-Logout
-</Button>
-
   </Col>
 </Row>
 
@@ -105,6 +103,7 @@ Logout
 )
 : (<></>)}
 </div>
+</>
 
   );
 };

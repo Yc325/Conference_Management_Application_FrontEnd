@@ -5,6 +5,7 @@ import {Button,Row,Col, Container,Card,ListGroup,Badge} from 'react-bootstrap'
 import Rate from '../components/Rate';
 import { useParams } from 'react-router-dom';
 import Comment from '../components/Comment';
+import NavBar from '../components/NavBar';
 
 
 
@@ -140,7 +141,7 @@ useEffect(()=> {
 function setScore(rate){
   setRating(rate)
   ajax(`/api/score/${rate}/${paperId}`,"post",jwt)
-  .then(rev_list =>{
+  .then((rev_list) =>{
     window.location.reload(false);
    })  
 }
@@ -148,6 +149,7 @@ function setScore(rate){
 
     return (
 <div>
+<NavBar jwt = {jwt}/>
 {isLoading ? ( // Display loading state if data has not been loaded yet
 <h1>Loading...</h1>
 ) : (

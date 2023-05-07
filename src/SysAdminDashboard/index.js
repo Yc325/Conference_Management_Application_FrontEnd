@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocalState } from '../util/useLocalStorage';
 import ajax from '../Services/fetchService';
 import {Button,Form,Row,Col,Container} from 'react-bootstrap'
+import NavBar from '../components/NavBar';
 
 
 const SysAdminDashboard = () => {
@@ -43,19 +44,11 @@ fetch(`/api/user/${role}`,{
 })
 }
     return (
+<>
+<NavBar jwt = {jwt}/>
+
 
 <div style={{margin: "2em"}}>
-<Row>
-<Col>
-<Button size='lg'onClick={()=>{
-  setJwt(null) 
-  window.location.href= '/login'}}>
-Logout
-</Button>
-  </Col>
-</Row>
-
-
 <Container className='mt-5'>
           <Row className='justify-content-center align-items-center'>
             <Col md="8" lg="6">
@@ -120,6 +113,7 @@ Logout
         </Container>
 
 </div>
+</>
 
   );
 };

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useLocalState } from '../util/useLocalStorage';
 import ajax from '../Services/fetchService';
 import {Button,Row,Col, Container,Card,ListGroup,Badge} from 'react-bootstrap'
+import Comment from '../components/Comment';
+import NavBar from '../components/NavBar';
 
 
 const PaperViewConfChair = () => {
@@ -11,6 +13,23 @@ const PaperViewConfChair = () => {
     const [paper,setPaper] = useState(null)
     const [isLoading, setIsLoading] = useState(true); // Add a state variable for loading state
     const [file,setFile] = useState(null);
+    const [comments, setComments] = useState([])
+    const [avgRating,setAvgRating] = useState(0)
+
+useEffect(()=> {
+  fetch(`/api/score/avg/${paperId}`,{
+      headers:{
+          "Content-Type":"application/json",
+          Authorization:`Bearer ${jwt}`,
+      },
+      method:"GET",
+  }).then(response => {
+       if (response.status === 200) return response.json()
+      }).then(rating => {
+        setAvgRating(rating);
+      })
+},[])
+
 
     useEffect(() => {
       ajax(`/api/papers/${paperId}`,"GET",jwt)
@@ -21,6 +40,12 @@ const PaperViewConfChair = () => {
       });
   }, []);
 
+  useEffect(()=>{
+    ajax(`/api/comments?paperId=${paperId}`,"get",jwt).then((commentData)=>{
+      setComments(commentData)
+    })
+  },[]);
+
 
     function downloadFile() {
         fetch(`/api/papers/dowloadFile/${file.id}`, {
@@ -30,7 +55,6 @@ const PaperViewConfChair = () => {
           method: "GET"
         })
           .then((response) => {
-            console.log(response)
             const filename =  response.headers.get('Content-Disposition').split('filename=')[1];
         response.blob().then(blob => {
           let url=  window.URL.createObjectURL(blob);
@@ -41,8 +65,16 @@ const PaperViewConfChair = () => {
         });
     });
 }
+
+function makeDecision(decision){
+  ajax(`/api/papers/${paperId}?decision=${decision}`,"put",jwt).then(()=>{
+    window.location.reload(false);
+  })
+}
+
     return (
 <div>
+<NavBar jwt = {jwt}/>
 {isLoading ? ( // Display loading state if data has not been loaded yet
 <h1>Loading...</h1>
 ) : (
@@ -59,6 +91,16 @@ const PaperViewConfChair = () => {
           pill
           bg={paper.status === "Submitted" ? "success" : paper.status === "Needs to be submitted" ? "danger" : "gray" }>
           {paper.status}
+          </Badge>
+          </Card.Subtitle>
+          <Card.Subtitle className='mb-2 text-muted'>
+            Conference Chair Decesion
+          <Badge 
+          style={{marginLeft:"1em"}}
+          pill
+          bg={paper.conferenceManagementDecision === true ? "success" : paper.conferenceManagementDecision === false ? "danger" : paper.conferenceManagementDecision === null ? "secondary" : "warning" }
+          >
+          {paper.conferenceManagementDecision === true ? "Accepted" : paper.conferenceManagementDecision === false ? "Rejected" : paper.conferenceManagementDecision === null ? "Pending" : "Undefined"}
           </Badge>
           </Card.Subtitle>
         <Card.Text>
@@ -81,10 +123,19 @@ const PaperViewConfChair = () => {
           <Row>
             <Col className='d-flex flex justify-content-center gap-5'>
             <Button size="lg" onClick={() => downloadFile()}>Download</Button>
-            <Button variant="danger" size="lg" onClick={() => console.log('Reject')}>Reject</Button>
-            <Button variant="success" size="lg" onClick={() => console.log('Accept')}>Accept</Button>
+            {paper.conferenceManagementDecision === null ?
+            <>
+            <Button variant="danger" size="lg" onClick={() => makeDecision(false)}>Reject</Button>
+            <Button variant="success" size="lg" onClick={() => makeDecision(true)}>Accept</Button>
+            </> : <></>}
+
             </Col>
           </Row>
+          <Row style={{marginTop:'1em'}}>
+          <Col className='d-flex flex justify-content-center'>
+          <p>Avarage Rating - {avgRating}</p>
+          </Col>
+        </Row>
           <Row style={{marginTop:"1em"}}>
             <Col className='d-flex flex justify-content-end'>
             <Button  variant="secondary" size='lg'onClick={()=>{
@@ -99,19 +150,18 @@ const PaperViewConfChair = () => {
 </Container>
 <Container>
     <h1>Comments</h1>
-    {paper.comments ? (
-        paper.comments.map((comment, index) => (
-            <div key={index}>
-                <h2>Comment {index + 1}</h2>
-                <p>{comment}</p>
-            </div>
-        ))
-    ) : (
-        <div>
-            <h2>No comments</h2>
-            <p>Be the first to comment!</p>
-        </div>
-    )}
+    <div className='mt-5'>
+      {comments.map((commentView) => (
+        <Comment createdDate = {commentView.postedAt}
+        createdBy = {commentView.reviewer.username}
+        text = {commentView.comment}
+        emitDeleteComment = {null}
+        id = {commentView.id}
+        jwt = {jwt}
+        />
+      ))}
+
+    </div>
 </Container>
           </>
 

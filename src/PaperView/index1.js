@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ajax from '../Services/fetchService';
 import {Button,Form, ListGroup,Card, Container,Row, Col} from 'react-bootstrap'
 import { useLocalState } from '../util/useLocalStorage';
+import NavBar from '../components/NavBar';
 
 const PaperEdit = () => {
     const paperId = window.location.href.split("/")[4]
@@ -34,10 +35,12 @@ const PaperEdit = () => {
 
     return (
 <div>
+
   {isLoading ? ( 
     <h1>Loading...</h1>
   ) : (
     <>
+    <NavBar jwt = {jwt}/>
       <Container className='mt-5 '>
       <Card style={{ width: '100%' }}>
       <Card.Body>

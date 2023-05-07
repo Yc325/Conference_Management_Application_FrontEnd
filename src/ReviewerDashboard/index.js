@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useLocalState } from '../util/useLocalStorage';
 import ajax from '../Services/fetchService';
 import {Button,Card,Badge,Row,Col} from 'react-bootstrap'
+import NavBar from '../components/NavBar';
+
 
 const ReviwerDashboard = () => {
 
@@ -31,26 +33,13 @@ const ReviwerDashboard = () => {
             })
     },[])
 
-    // useEffect(()=>{
-    //   ajax("/api/score/all","GET",jwt)
-    //   .then(paperDataScore => {
-    //     console.log(paperDataScore)
-    //     setPaperScore(paperDataScore);
-    //         })
-    // },[])
-
     return (
 
+<>
+<NavBar jwt = {jwt}/>
+
 <div style={{margin: "2em"}}>
-<Row>
-<Col>
-<Button size='lg'onClick={()=>{
-  setJwt(null) 
-  window.location.href= '/login'}}>
-Logout
-</Button>
-  </Col>
-</Row>
+
 
 <h1>Rate Papers</h1>
 {Revpapers ? (
@@ -84,10 +73,6 @@ Logout
           {paper.conferenceManagementDecision === true ? "Accepted" : paper.conferenceManagementDecision === false ? "Rejected" : paper.conferenceManagementDecision === null ? "Pending" : "Undefined"}
           </Badge>
           </Card.Subtitle>
-
-        {/* <Card.Subtitle className="mb-2 text-muted">
-          Paper Score: {paper.score}
-          </Card.Subtitle> */}
 
           <Card.Subtitle className="mb-2 text-muted">
         Paper Name: {paper.name.slice(0, 20) + (paper.name.length > 20 ? "..." : "")}
@@ -161,6 +146,7 @@ Logout
 )
 : (<></>)}
 </div>
+</>
 
   );
 };

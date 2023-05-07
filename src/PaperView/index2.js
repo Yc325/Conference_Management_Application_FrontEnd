@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useLocalState } from '../util/useLocalStorage';
 import ajax from '../Services/fetchService';
 import {Button,Row,Col, Container,Card,ListGroup,Badge} from 'react-bootstrap'
+import Comment from '../components/Comment';
+import NavBar from '../components/NavBar';
 
 
 const PaperView = () => {
@@ -11,6 +13,8 @@ const PaperView = () => {
     const [paper,setPaper] = useState(null)
     const [isLoading, setIsLoading] = useState(true); // Add a state variable for loading state
     const [file,setFile] = useState(null);
+    const [comments, setComments] = useState([])
+
 
     useEffect(() => {
       ajax(`/api/papers/${paperId}`,"GET",jwt)
@@ -21,7 +25,12 @@ const PaperView = () => {
       });
   }, []);
 
-  //const decisionText = paper.conferenceManagementDecision === null ? "Pending" : "Decision made";
+  useEffect(()=>{
+    ajax(`/api/comments?paperId=${paperId}`,"get",jwt).then((commentData)=>{
+      setComments(commentData)
+    })
+  },[]);
+
 
     function downloadFile() {
         fetch(`/api/papers/dowloadFile/${file.id}`, {
@@ -31,7 +40,6 @@ const PaperView = () => {
           method: "GET"
         })
           .then((response) => {
-            console.log(response)
             const filename =  response.headers.get('Content-Disposition').split('filename=')[1];
         response.blob().then(blob => {
           let url=  window.URL.createObjectURL(blob);
@@ -48,8 +56,9 @@ const PaperView = () => {
 <h1>Loading...</h1>
 ) : (
 <>
-{console.log(paper)}
-
+<NavBar 
+jwt = {jwt}
+/>
 <Container className='mt-5'>
 <Card style={{ width: '100%'}}>
       <Card.Body>
@@ -107,19 +116,19 @@ const PaperView = () => {
 </Container>
 <Container>
     <h1>Comments</h1>
-    {paper.comments ? (
-        paper.comments.map((comment, index) => (
-            <div key={index}>
-                <h2>Comment {index + 1}</h2>
-                <p>{comment}</p>
-            </div>
-        ))
-    ) : (
-        <div>
-            <h2>No comments</h2>
-            <p>Be the first to comment!</p>
-        </div>
-    )}
+    <div className='mt-5'>
+      {comments.map((commentView) => (
+        <Comment key = {commentView.id} createdDate = {commentView.postedAt}
+        createdBy = {commentView.reviewer.username}
+        text = {commentView.comment}
+        emitDeleteComment = {null}
+        id = {commentView.id}
+        jwt = {jwt}
+        />
+      ))}
+
+    </div>
+
 </Container>
           </>
 
