@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocalState } from '../util/useLocalStorage';
 import ajax from '../Services/fetchService';
-import {Button,Row,Col, Container,Card,ListGroup,Badge} from 'react-bootstrap'
+import {Button,Row,Col, Container,Card,ListGroup,Badge, NavDropdown} from 'react-bootstrap'
 import Rate from '../components/Rate';
 import { useParams } from 'react-router-dom';
 import Comment from '../components/Comment';
@@ -146,6 +146,13 @@ function setScore(rate){
    })  
 }
 
+function Bid(){
+  ajax(`/api/papers?paperId=${paperId}`,"put",jwt).then((data)=> {
+    console.log("DONE")
+    window.location.href= '/dashboard'
+  })
+}
+
 
     return (
 <div>
@@ -155,9 +162,22 @@ function setScore(rate){
 ) : (
 <>
 <Container className='mt-5'>
+
 <Card style={{ width: '100%'}} key={paper.id}>
       <Card.Body>
+      <Row>
+        <Col className='d-flex flex justify-content-between'>
         <Card.Title>Paper {paperId}</Card.Title>
+        <NavDropdown
+        title="..." 
+        id="nav-dropdown"
+        >
+        <NavDropdown.Item onClick={() => Bid()}>bid</NavDropdown.Item>
+        </NavDropdown>
+        </Col>
+        </Row>
+
+       
         <Card.Subtitle className="mb-2 text-muted">{paper.name}</Card.Subtitle>
         <Card.Subtitle className="mb-2 text-muted">
           Paper Status
