@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useLocalState } from '../util/useLocalStorage';
 import ajax from '../Services/fetchService';
-import {Button,Row,Col, Container,Card,ListGroup,Badge, NavDropdown} from 'react-bootstrap'
+import {Button,Row,Col, Container,Card,ListGroup,Badge, NavDropdown,Tooltip,OverlayTrigger} from 'react-bootstrap'
 import Rate from '../components/Rate';
 import { useParams } from 'react-router-dom';
 import Comment from '../components/Comment';
 import NavBar from '../components/NavBar';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 
 
 
@@ -23,6 +24,7 @@ const PaperViewReviewer = () => {
     const [rating,setRating] = useState(0)
     const [avgRating,setAvgRating] = useState(0)
     const [paperID, setPapersID] = useState(null)
+    const [allScores, setAllScores] = useState([])
     const emptyComment = 
     {
       text: "",
@@ -35,6 +37,56 @@ const PaperViewReviewer = () => {
     const [comments, setComments] = useState([])
 
 
+
+
+    const renderTooltip = (props) => (
+      <Tooltip
+      id="button-tooltip" {...props}>
+        <ul>
+          <li><strong>7 stars</strong> (strong accept)</li>
+          <li><strong>6 stars</strong> (accept)</li>
+          <li><strong>5 stars</strong> (weak accept)</li>
+          <li><strong>4 stars</strong> (borderline paper)</li>
+          <li><strong>3 stars</strong> (weak reject)</li>
+          <li><strong>2 stars</strong> (reject)</li>
+          <li><strong>1 stars</strong> (strong reject)</li>
+        </ul>
+      </Tooltip>
+    );
+
+    const Example = () => (
+      <OverlayTrigger
+      placement="bottom"
+      delay={{ show: 250, hide: 400 }}
+      overlay={renderTooltip}
+    >
+      <FontAwesomeIcon
+            style={{marginLeft:"1em"}}
+            icon={faInfoCircle}
+      />
+    </OverlayTrigger>
+    )
+
+    function getScoreString(score) {
+      switch (Math.round(score)) {
+        case 1:
+          return "strong reject";
+        case 2:
+          return "reject";
+        case 3:
+          return "weak reject";
+        case 4:
+          return "borderline paper";
+        case 5:
+          return "weak accept";
+        case 6:
+          return "accept";
+        case 7:
+          return "strong accept";
+        default:
+          return score.toString();
+      }
+    }
 
 function submitComment(){
   ajax("/api/comments",'post',jwt,comment).then((data)=>
@@ -63,6 +115,14 @@ function handleDeleteComment(commentId){
    })
   
 }
+
+useEffect(()=>{
+ajax(`/api/score?paperId=${paperId}`,"get",jwt).then((scoreData) => {
+  setAllScores(scoreData)
+  console.log(scoreData)
+})
+},[]);
+
 
 useEffect(()=>{
   ajax(`/api/comments?paperId=${paperId}`,"get",jwt).then((commentData)=>{
@@ -142,7 +202,22 @@ function setScore(rate){
   setRating(rate)
   ajax(`/api/score/${rate}/${paperId}`,"post",jwt)
   .then((rev_list) =>{
-    window.location.reload(false);
+      fetch(`/api/score/avg/${paperId}`,{
+          headers:{
+              "Content-Type":"application/json",
+              Authorization:`Bearer ${jwt}`,
+          },
+          method:"GET",
+      }).then(response => {
+           if (response.status === 200) return response.json()
+          }).then(rating => {
+            setAvgRating(rating);
+          })
+      ajax(`/api/score?paperId=${paperId}`,"get",jwt).then((scoreData) => {
+              setAllScores(scoreData)
+              console.log(scoreData)
+            })
+
    })  
 }
 
@@ -168,12 +243,18 @@ function Bid(){
       <Row>
         <Col className='d-flex flex justify-content-between'>
         <Card.Title>Paper {paperId}</Card.Title>
+         {rating === 0?
+         <>
         <NavDropdown
         title="..." 
         id="nav-dropdown"
         >
         <NavDropdown.Item onClick={() => Bid()}>bid</NavDropdown.Item>
         </NavDropdown>
+         </>
+         :
+         <></>}
+
         </Col>
         </Row>
 
@@ -202,6 +283,28 @@ function Bid(){
         )}
       </ListGroup>
         </Card.Text>
+        {rating != 0?<>
+        <Card.Text>
+        Reviewers:
+        <ListGroup>
+        {allScores.map((scoreData) => (
+        <ListGroup.Item action variant="secondary">
+        <Row>
+          <Col className='d-flex flex justify-content-between'>
+          <span>{scoreData.reviwer.username}</span>
+          <span>{getScoreString(scoreData.score)}</span>
+          </Col>
+        </Row>
+
+        </ListGroup.Item>
+  ))}
+</ListGroup>
+        </Card.Text>
+        
+        </>
+        :
+        <></>}
+       
         <Card.Subtitle className="mb-2 text-muted justify-content-center">
           File Name: {paper.file.fileName}
           </Card.Subtitle>
@@ -218,11 +321,12 @@ function Bid(){
          <>
          {/* RATING  */}
         <Row style={{marginTop:'1em'}}>
-          <Col className='d-flex flex justify-content-center'>
+          <Col className='d-flex flex justify-content-center align-items-center'>
             {rating === 0? 
             <>
             <Rate rating={rating} 
             onRating={(rate) => setScore(rate)}/>
+            <Example/>
             </>
             :
             <>
@@ -230,6 +334,7 @@ function Bid(){
             rating={rating}
             onRating={(rate) => setRating(rate)}
             pointerEvents={"none"}/>
+            <Example/>
             </>}
           </Col>
         </Row> 
@@ -238,7 +343,7 @@ function Bid(){
         </>}
         <Row style={{marginTop:'1em'}}>
           <Col className='d-flex flex justify-content-center'>
-          <p>Avarage Rating - {avgRating}</p>
+          <p>Avarage Rating - {getScoreString(avgRating)}</p>
           </Col>
         </Row>
 
@@ -247,7 +352,12 @@ function Bid(){
 </Container>
 <Container>
     <h1>Comments</h1>
-    {resultOfBoll ? 
+    {rating === 0? 
+    <>
+    </>
+    :
+    <>
+        {resultOfBoll ? 
          <>
          {/* Comments  */}
         <div className='mt-4'>
@@ -263,6 +373,7 @@ function Bid(){
         </>
         : <>
         </>}
+    </>}
         <div className='mt-5'>
       {comments.map((commentView) => (
         <Comment createdDate = {commentView.postedAt}

@@ -50,7 +50,7 @@ Rate.propTypes = {
 };
 
 Rate.defaultProps = {
-  count: 5,
+  count: 7,
   rating: 0,
   color: {
     filled: "#f5eb3b",
