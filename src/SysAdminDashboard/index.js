@@ -10,6 +10,7 @@ const SysAdminDashboard = () => {
     const [jwt,setJwt] = useLocalState("","jwt")
     const [username,setUsername] = useState("")
     const [password,setPassword] = useState("")
+    const [email, SetEmail] = useState("")
     const [role,setRole] = useState("")
 
 
@@ -21,7 +22,8 @@ function createUser(){
 
   const reqBody={
     "username":username,
-    "password":password
+    "password":password,
+    "email":email
   };
   console.log(JSON.stringify(reqBody))
   console.log(role)
@@ -61,10 +63,27 @@ fetch(`/api/user/${role}`,{
             <Form.Control
             type="email"
             size='lg'
-            placeholder='Enter email'
+            placeholder='Enter username'
             value={username}
             onChange={(event)=> setUsername(event.target.value)}/>
 </Form.Group>
+            </Col>
+          </Row>
+          <Row className='justify-content-center align-items-center'>
+            <Col md="8" lg="6">
+            <Form.Group 
+            className="mb-3 " 
+            controlId="email">
+            <Form.Label className='fs-4'>
+              Email
+            </Form.Label>
+            <Form.Control
+            type="email"
+            size='lg'
+            placeholder='Enter email'
+            value={email}
+            onChange={(event)=> SetEmail(event.target.value)}/>
+            </Form.Group>
             </Col>
           </Row>
 
