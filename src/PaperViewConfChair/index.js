@@ -15,6 +15,8 @@ const PaperViewConfChair = () => {
     const [file,setFile] = useState(null);
     const [comments, setComments] = useState([])
     const [avgRating,setAvgRating] = useState(0)
+    const [allScores, setAllScores] = useState([])
+
 
 useEffect(()=> {
   fetch(`/api/score/avg/${paperId}`,{
@@ -45,6 +47,12 @@ useEffect(()=> {
       setComments(commentData)
     })
   },[]);
+  useEffect(()=>{
+    ajax(`/api/score?paperId=${paperId}`,"get",jwt).then((scoreData) => {
+      setAllScores(scoreData)
+      console.log(scoreData)
+    })
+    },[]);
 
 
     function downloadFile() {
@@ -70,6 +78,26 @@ function makeDecision(decision){
   ajax(`/api/papers/${paperId}?decision=${decision}`,"put",jwt).then(()=>{
     window.location.reload(false);
   })
+}
+function getScoreString(score) {
+  switch (Math.round(score)) {
+    case 1:
+      return "strong reject";
+    case 2:
+      return "reject";
+    case 3:
+      return "weak reject";
+    case 4:
+      return "borderline paper";
+    case 5:
+      return "weak accept";
+    case 6:
+      return "accept";
+    case 7:
+      return "strong accept";
+    default:
+      return score.toString();
+  }
 }
 
     return (
@@ -116,6 +144,22 @@ function makeDecision(decision){
         <ListGroup.Item action variant="danger">Unknown</ListGroup.Item>
         )}
       </ListGroup>
+        </Card.Text>
+        <Card.Text>
+        Reviewers:
+        <ListGroup>
+        {allScores.map((scoreData) => (
+        <ListGroup.Item action variant="secondary">
+        <Row>
+          <Col className='d-flex flex justify-content-between'>
+          <span>{scoreData.reviwer.username}</span>
+          <span>{getScoreString(scoreData.score)}</span>
+          </Col>
+        </Row>
+
+        </ListGroup.Item>
+  ))}
+</ListGroup>
         </Card.Text>
         <Card.Subtitle className="mb-2 text-muted justify-content-center">
           File Name: {paper.file.fileName}

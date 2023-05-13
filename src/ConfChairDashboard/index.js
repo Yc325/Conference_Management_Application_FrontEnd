@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocalState } from '../util/useLocalStorage';
 import ajax from '../Services/fetchService';
-import {Button,Card,Container,Row,Col,ListGroup} from 'react-bootstrap'
+import {Button,Card,Row,Col,Alert} from 'react-bootstrap'
 import NavBar from '../components/NavBar';
 
 const ConfChairDashboard = () => {
@@ -14,6 +14,7 @@ const ConfChairDashboard = () => {
     const[author,setAuthor] = useState(null)
 
     const [reviwers,setReviwers] = useState(null)
+    const [show, setShow] = useState(false);
 
     useEffect(()=> {
       ajax("/api/papers/all","GET",jwt)
@@ -24,16 +25,27 @@ const ConfChairDashboard = () => {
 
     function getList(){
    ajax("/api/papers/reviwers","get",jwt)
-   .then(rev_list =>{
+   .then((rev_list) =>{
     setReviwers(rev_list)
-    console.log(rev_list)
+    setShow(true)
    })
     }
 
     return (
 <>
 <NavBar jwt = {jwt}/>
-
+<Alert show={show} variant="success">
+        <Alert.Heading>Auto Assigned!</Alert.Heading>
+        <p>
+          All reviwers has been successfully assigned
+        </p>
+        <hr />
+        <div className="d-flex justify-content-end">
+          <Button onClick={() => setShow(false)} variant="outline-success">
+            Close
+          </Button>
+        </div>
+      </Alert>
 <div style={{margin: "2em"}}>
 <Row>
 <Col className='d-flex flex justify-content-evenly'>

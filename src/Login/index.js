@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocalState } from '../util/useLocalStorage';
 import {Container, Row, Col,Button, Form} from 'react-bootstrap'
+import NavBar from '../components/NavBar';
 
 const Login = () => {
 
@@ -41,7 +42,7 @@ function sendLoginRequest(){
 };
 return (
         <>
-        
+        {/* <NavBar jwt=""/> */}
         <Container className='mt-5'>
           <Row className='justify-content-center align-items-center'>
             <Col md="8" lg="6">
