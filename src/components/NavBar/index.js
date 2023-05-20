@@ -14,10 +14,15 @@ import { useLocalState } from '../../util/useLocalStorage';
 
 
 
+
 const NavBar = (props) => {
 
+
+    const status = localStorage.getItem("status")
+    console.log(status)
     const [jwtCache,setJwtCache] = useLocalState("","jwt")
     const {jwt} = props
+
 
     const [notification,setNotification] = useState([])
 
@@ -33,13 +38,14 @@ const NavBar = (props) => {
 
     }
       useEffect(()=>{
-        if (jwtCache!==""){
+        if (status!=="false"){
         ajax(`/api/notification`,"get",jwtCache).then((notificationData)=>{
           setNotification(notificationData)
         })
       }
       },[]);
       function Logout(){
+        localStorage.setItem("status",false)
         window.location.href = "/login"
       }
     return (
@@ -57,9 +63,12 @@ const NavBar = (props) => {
               navbarScroll
             >
             </Nav>
+            {status!=="false" ? <> <Nav.Link href="/dashboard" style={{fontWeight:"700",fontSize:"20px"}}>Dashboard</Nav.Link></> : <></>}
 
 
-        <Dropdown
+      {status!=="false"? 
+        <>
+         <Dropdown
         className="d-inline mx-2"
         autoClose="outside"
         drop="start">
@@ -75,12 +84,6 @@ const NavBar = (props) => {
 
         </Dropdown.Toggle>
 
-        {jwtCache===""? 
-        <>
-        
-        </>
-         : 
-        <>
         <Dropdown.Menu>
         {notification.map((data)=>(
             <DropDownComponent
@@ -94,19 +97,20 @@ const NavBar = (props) => {
             />
         ))}
         </Dropdown.Menu>
-        </>}
-
       </Dropdown>
-            {jwtCache===""?
+        </>
+         : 
+        <>
+        </>}
+            {status=="false"?
             <>
-            <Nav.Link href="/login">Login</Nav.Link>
+            <Nav.Link style={{fontWeight:"700"}} href="/login">Login</Nav.Link>
             </>
             :
             <>
-            <Nav.Link href="#action2">{decode_jwt.sub}</Nav.Link>
+            <Nav.Link href="#" style={{fontWeight:"700"}}>{decode_jwt.sub}</Nav.Link>
+            <Nav.Link style={{marginLeft:"5px",color:"black",fontWeight:"700"}} onClick={()=>Logout()} >Logout</Nav.Link>
             </>}
-
-            <Nav.Link style={{margin:"15px",color:"black"}} onClick={()=>Logout()} >Logout</Nav.Link>
           </Navbar.Collapse>
         </Container>
       </Navbar>

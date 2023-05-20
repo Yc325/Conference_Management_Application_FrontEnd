@@ -25,6 +25,7 @@ const PaperViewReviewer = () => {
     const [avgRating,setAvgRating] = useState(0)
     const [paperID, setPapersID] = useState(null)
     const [allScores, setAllScores] = useState([])
+    const [resultOfBoll, setresultOfBoll] = useState(null)
     const emptyComment = 
     {
       text: "",
@@ -119,7 +120,6 @@ function handleDeleteComment(commentId){
 useEffect(()=>{
 ajax(`/api/score?paperId=${paperId}`,"get",jwt).then((scoreData) => {
   setAllScores(scoreData)
-  console.log(scoreData)
 })
 },[]);
 
@@ -140,9 +140,10 @@ useEffect(()=>{
   }, []);
 
   useEffect(()=> {
-    ajax("/api/papers/reviewer","GET",jwt)
+    ajax(`/api/papers/reviewer/${paperId}`,"GET",jwt)
     .then(paperData => {
-    setPapersID(paperData.map(paper => paper.id));
+      console.log(paperData)
+      setresultOfBoll(paperData)
           })
   },[])
 
@@ -173,10 +174,6 @@ useEffect(()=> {
         setAvgRating(rating);
       })
 },[])
-
-
-
-  const resultOfBoll = paperID && paperID.includes(paper.id);
 
     function downloadFile() {
         fetch(`/api/papers/dowloadFile/${file.id}`, {
@@ -215,7 +212,6 @@ function setScore(rate){
           })
       ajax(`/api/score?paperId=${paperId}`,"get",jwt).then((scoreData) => {
               setAllScores(scoreData)
-              console.log(scoreData)
             })
 
    })  
@@ -223,7 +219,6 @@ function setScore(rate){
 
 function Bid(){
   ajax(`/api/papers?paperId=${paperId}`,"put",jwt).then((data)=> {
-    console.log("DONE")
     window.location.href= '/dashboard'
   })
 }
@@ -243,7 +238,8 @@ function Bid(){
       <Row>
         <Col className='d-flex flex justify-content-between'>
         <Card.Title>Paper {paperId}</Card.Title>
-         {rating === 0?
+        {resultOfBoll ? <>
+          {rating === 0?
          <>
         <NavDropdown
         title="..." 
@@ -254,7 +250,8 @@ function Bid(){
          </>
          :
          <></>}
-
+        </> : 
+        <></>}
         </Col>
         </Row>
 

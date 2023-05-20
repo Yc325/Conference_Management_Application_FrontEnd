@@ -71,13 +71,17 @@ const Descipt = styled.p`
   letter-spacing: 3px;
 `
 const Button = styled.button`
+  width: 200px;
   padding: 10px;
   background-color: transparent;
-  font-size: 10px;
+  font-size: 16px;
+  font-weight: 700;
+
   cursor: pointer;
 `
 
 export const Slider = () => {
+  const status = localStorage.getItem("status")
   const [slideIndex, setSlideIndex] = useState(0);
   const handleClick = (direction) =>{
     if(direction === "left"){
@@ -102,9 +106,12 @@ export const Slider = () => {
           <InfoContainer>
             <Title>{item.title}</Title>
             <Descipt>{item.desc}</Descipt>
+            {status=="false" ? <> <Button onClick={()=>(window.location.href = "login")}>Login</Button></> : <></>}
           </InfoContainer>
           </Slide>
+
           ))}
+
         </Wrapper>
 
         <Arrow direction="right" onClick={()=> handleClick("right")}>

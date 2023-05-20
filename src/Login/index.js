@@ -34,6 +34,7 @@ function sendLoginRequest(){
 })
   .then(([body,headers]) =>{
     setJwt(headers.get('authorization'));
+    localStorage.setItem("status",true)
     window.location.href = "dashboard";
     
  }).catch((message)=> {
@@ -42,7 +43,7 @@ function sendLoginRequest(){
 };
 return (
         <>
-        {/* <NavBar jwt=""/> */}
+        <NavBar jwt=""/>
         <Container className='mt-5'>
           <Row className='justify-content-center align-items-center'>
             <Col md="8" lg="6">
