@@ -17,7 +17,6 @@ import SysAdminDashboard from './SysAdminDashboard';
 import PaperViewReviewer from './PaperViewReviewer';
 import PaperViewConfChair from './PaperViewConfChair';
 
-
 function App() {
 
   const [jwt,setJwt] = useLocalState("","jwt")

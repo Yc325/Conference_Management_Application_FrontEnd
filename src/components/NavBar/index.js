@@ -11,23 +11,32 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import DropDownComponent from './index1';
 import logo from '../../img/Logo.svg'
 import { useLocalState } from '../../util/useLocalStorage';
+import { useLocalStorage } from '../../util/localStorageIndex';
 
 
 
 
 const NavBar = (props) => {
 
-
+    const [statusValue, setStatusValue] = useLocalStorage("status","")
     const status = localStorage.getItem("status")
-    console.log(status)
     const [jwtCache,setJwtCache] = useLocalState("","jwt")
     const {jwt} = props
 
 
-    const [notification,setNotification] = useState([])
+function decode_token(jwtValue){
+  try{
+    const value = jwt_decode(jwtValue)
+    return value
+  } catch (error) {
+    return ""
+  }
 
-    const decode_jwt = jwt_decode(jwtCache)
-  
+}
+const decode_jwt = decode_token(jwtCache)
+const [notification,setNotification] = useState([])
+
+
     function handleReadNotification(notificationId){
         ajax(`/api/notification?notificationId=${notificationId}`,"put",jwtCache).then(()=>{
             const notificationCopy = [...notification];
@@ -38,7 +47,8 @@ const NavBar = (props) => {
 
     }
       useEffect(()=>{
-        if (status!=="false"){
+        if (status==="true"){
+          console.log("RUNNING")
         ajax(`/api/notification`,"get",jwtCache).then((notificationData)=>{
           setNotification(notificationData)
         })
@@ -63,10 +73,10 @@ const NavBar = (props) => {
               navbarScroll
             >
             </Nav>
-            {status!=="false" ? <> <Nav.Link href="/dashboard" style={{fontWeight:"700",fontSize:"20px"}}>Dashboard</Nav.Link></> : <></>}
+            {status==="true" ? <> <Nav.Link href="/dashboard" style={{fontWeight:"700",fontSize:"20px"}}>Dashboard</Nav.Link></> : <></>}
 
 
-      {status!=="false"? 
+      {status==="true"? 
         <>
          <Dropdown
         className="d-inline mx-2"
@@ -102,7 +112,7 @@ const NavBar = (props) => {
          : 
         <>
         </>}
-            {status=="false"?
+            {status!=="true"?
             <>
             <Nav.Link style={{fontWeight:"700"}} href="/login">Login</Nav.Link>
             </>
