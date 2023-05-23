@@ -15,7 +15,7 @@ const PaperViewConfChair = () => {
     const [file,setFile] = useState(null);
     const [comments, setComments] = useState([])
     const [avgRating,setAvgRating] = useState(0)
-    const [allScores, setAllScores] = useState([])
+    const [allScores, setAllScores] = useState("")
 
 
 useEffect(()=> {
@@ -47,10 +47,10 @@ useEffect(()=> {
       setComments(commentData)
     })
   },[]);
+
   useEffect(()=>{
     ajax(`/api/score?paperId=${paperId}`,"get",jwt).then((scoreData) => {
       setAllScores(scoreData)
-      console.log(scoreData)
     })
     },[]);
 
@@ -73,12 +73,11 @@ useEffect(()=> {
         });
     });
 }
-
 function makeDecision(decision){
-  ajax(`/api/papers/${paperId}?decision=${decision}`,"put",jwt).then(()=>{
-    window.location.reload(false);
-  })
+  ajax(`/api/papers/${paperId}?decision=${decision}`,"put",jwt)
+  window.location.reload(false);
 }
+
 function getScoreString(score) {
   switch (Math.round(score)) {
     case 1:
@@ -145,6 +144,9 @@ function getScoreString(score) {
         )}
       </ListGroup>
         </Card.Text>
+
+        {allScores ? 
+        <>
         <Card.Text>
         Reviewers:
         <ListGroup>
@@ -159,8 +161,13 @@ function getScoreString(score) {
 
         </ListGroup.Item>
   ))}
-</ListGroup>
-        </Card.Text>
+      </ListGroup>
+      </Card.Text>
+      </> 
+      
+      : <>
+      </>}
+        
         <Card.Subtitle className="mb-2 text-muted justify-content-center">
           File Name: {paper.file.fileName}
           </Card.Subtitle>
@@ -177,7 +184,7 @@ function getScoreString(score) {
           </Row>
           <Row style={{marginTop:'1em'}}>
           <Col className='d-flex flex justify-content-center'>
-          <p>Avarage Rating - {avgRating}</p>
+          <p>Avarage Rating - {getScoreString(avgRating)}</p>
           </Col>
         </Row>
           <Row style={{marginTop:"1em"}}>

@@ -13,7 +13,6 @@ const PaperSubmit = () => {
 function onFileChangeHandler(){
         const formData = new FormData();
         formData.append('file', file);
-        console.log(file)
         fetch(`/api/papers/${paperId}`, {
             headers:{
                 Authorization:`Bearer ${jwt}`,

@@ -142,7 +142,6 @@ useEffect(()=>{
   useEffect(()=> {
     ajax(`/api/papers/reviewer/${paperId}`,"GET",jwt)
     .then(paperData => {
-      console.log(paperData)
       setresultOfBoll(paperData)
           })
   },[])

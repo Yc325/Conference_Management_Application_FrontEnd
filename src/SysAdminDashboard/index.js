@@ -25,9 +25,6 @@ function createUser(){
     "password":password,
     "email":email
   };
-  console.log(JSON.stringify(reqBody))
-  console.log(role)
-
 fetch(`/api/user/${role}`,{
   headers:{
     "Content-Type":"application/json",
@@ -38,7 +35,6 @@ fetch(`/api/user/${role}`,{
 })
 .then(response=>{
   if(response.status===200){
-  console.log(response.json)
   return response.json;
   }
   else

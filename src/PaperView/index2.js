@@ -14,6 +14,8 @@ const PaperView = () => {
     const [isLoading, setIsLoading] = useState(true); // Add a state variable for loading state
     const [file,setFile] = useState(null);
     const [comments, setComments] = useState([])
+    const [allScores, setAllScores] = useState("")
+    const [avgRating,setAvgRating] = useState(0)
 
 
     useEffect(() => {
@@ -24,12 +26,30 @@ const PaperView = () => {
         setIsLoading(false); // Set loading state to false when data has been fetched
       });
   }, []);
+  useEffect(()=> {
+    fetch(`/api/score/avg/${paperId}`,{
+        headers:{
+            "Content-Type":"application/json",
+            Authorization:`Bearer ${jwt}`,
+        },
+        method:"GET",
+    }).then(response => {
+         if (response.status === 200) return response.json()
+        }).then(rating => {
+          setAvgRating(rating);
+        })
+  },[])
 
   useEffect(()=>{
     ajax(`/api/comments?paperId=${paperId}`,"get",jwt).then((commentData)=>{
       setComments(commentData)
     })
   },[]);
+  useEffect(()=>{
+    ajax(`/api/score?paperId=${paperId}`,"get",jwt).then((scoreData) => {
+      setAllScores(scoreData)
+    })
+    },[]);
 
 
     function downloadFile() {
@@ -49,6 +69,26 @@ const PaperView = () => {
           a.click();
         });
     });
+}
+function getScoreString(score) {
+  switch (Math.round(score)) {
+    case 1:
+      return "strong reject";
+    case 2:
+      return "reject";
+    case 3:
+      return "weak reject";
+    case 4:
+      return "borderline paper";
+    case 5:
+      return "weak accept";
+    case 6:
+      return "accept";
+    case 7:
+      return "strong accept";
+    default:
+      return score.toString();
+  }
 }
     return (
 <div>
@@ -97,10 +137,40 @@ jwt = {jwt}
         <ListGroup.Item action variant="danger">Unknown</ListGroup.Item>
         )}
       </ListGroup>
-        </Card.Text>
+      </Card.Text>
+      {allScores ?
+      <>
+        <Card.Text>
+        Reviewers:
+        <ListGroup>
+        {allScores.map((scoreData) => (
+        <ListGroup.Item action variant="secondary">
+        <Row>
+          <Col className='d-flex flex justify-content-between'>
+          <span>{scoreData.reviwer.username}</span>
+          <span>{getScoreString(scoreData.score)}</span>
+          </Col>
+        </Row>
+
+        </ListGroup.Item>
+  ))}
+      </ListGroup>
+      </Card.Text>
+      </> 
+      
+      : <>
+      </>}
+
+
         <Card.Subtitle className="mb-2 text-muted justify-content-center">
           File Name: {paper.file.fileName}
           </Card.Subtitle>
+          
+          <Row style={{marginTop:'1em'}}>
+          <Col className='d-flex flex justify-content-center'>
+          <p>Avarage Rating - {getScoreString(avgRating)}</p>
+          </Col>
+        </Row>
           <Row>
             <Col className='d-flex flex justify-content-between'>
             <Button size="lg" onClick={() => downloadFile()}>Download</Button>

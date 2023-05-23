@@ -20,7 +20,6 @@ const ReviwerDashboard = () => {
     useEffect(()=> {
       ajax("/api/papers/reviewer","GET",jwt)
       .then(paperData => {
-        console.log(paperData)
         setRevPapers(paperData);
       setPapersID(paperData.map(paper => paper.id));
             })

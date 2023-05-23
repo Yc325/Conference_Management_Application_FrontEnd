@@ -48,7 +48,6 @@ const [notification,setNotification] = useState([])
     }
       useEffect(()=>{
         if (status==="true"){
-          console.log("RUNNING")
         ajax(`/api/notification`,"get",jwtCache).then((notificationData)=>{
           setNotification(notificationData)
         })
